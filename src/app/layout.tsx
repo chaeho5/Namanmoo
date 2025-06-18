@@ -4,6 +4,8 @@ import "./globals.css";
 import {ThemeProvider} from "next-themes";
 import { Header } from "@/components/Header";
 import { PostProvider } from "@/context/PostContext";
+import { AuthProvider } from "@/context/AuthContext";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,18 +26,46 @@ export default function RootLayout({children,}: Readonly <{children: React.React
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}>
+
+        {/* 변경점 */}
+        {/* 왼쪽 배경 이미지 컨테이너 */}
+        <div className="hidden md:block fixed top-5 right-130 w-full h-full z-[-1] ">
+          <Image
+            src="/korone.png"
+            alt="Left background decorative image"
+            fill
+            className="object-contain opacity-70 dark:opacity-70"
+            priority={false}
+          />
+        </div>
+
+        {/* 오른쪽 배경 이미지 컨테이너 */}
+        <div className="hidden md:block fixed top-15 left-115 w-full h-full z-[-1]">
+          <Image
+            src="/beargguy.png"
+            alt="Right background decorative image"
+            fill
+            className="object-contain opacity-70 dark:opacity-70"
+            priority={false}
+          />
+        </div>
+        {/* 변경점 */}
+
          <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
+
+          <AuthProvider>
           <PostProvider>
           {/* 헤더 */}
           <Header/>
           {/* 페이지 */}
           {children}
           </PostProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -32,21 +32,21 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
   
   const [newComment, setNewComment] = useState("");
   
-  const postData = posts.find((p) => p.id === parseInt(params.id));
+  const postData = posts.find((p) => p.post.id === parseInt(params.id));
 
   const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!newComment.trim() || !postData) return;
 
     // 중앙 관리소에 있는 addComment 함수를 호출합니다!
-    addComment(postData.id, newComment);
+    addComment(postData.post_id, newComment);
 
     setNewComment("");
   };
 
   const handleDelete = () => {
     if (!postData) return;
-    deletePost(postData.id);
+    deletePost(postData.post_id);
     alert("삭제 됬다.")
     router.push("/"); //삭제 후 메인 홈페이지 이동
   }
@@ -63,7 +63,6 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
 
   return (
     <main className="container mx-auto max-w-4xl p-4 md:p-8">
-      {/* ... (게시물 상세 내용 부분은 동일) ... */}
       <article className="space-y-6">
         <h1 className="text-4xl font-extrabold">{postData.title}</h1>
         <div className="flex justify-between items-center text-sm text-muted-foreground">
@@ -77,7 +76,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
           {isAuthor && (
             <div className="flex gap-4">
               {/* 수정: Link 컴포넌트로 감싸줍니다. */}
-              <Link href={`/posts/${postData.id}/edit`}>
+              <Link href={`/posts/${postData.post_id}/edit`}>
                 <span className="cursor-pointer hover:text-primary">수정</span>
               </Link>
               
@@ -106,6 +105,29 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         <div className="prose dark:prose-invert max-w-none">{postData.content}</div>
       </article>
 
+
+      {/* 변경점 */}
+      {/* ---  댓글 섹션 --- */}
+       <section className="mt-12">
+        {/*  'comments'를 'postData.comments'로 수정 */}
+        <h2 className="text-2xl font-bold mb-4">댓글 ({postData.comments.length})</h2>
+        
+        {/* 댓글 목록 */}
+        <div className="space-y-4">
+          {/*  'comments'를 'postData.comments'로 수정 */}
+          {postData.comments.map((comment) => (
+            <Card key={comment.id}>
+              <CardContent className="p-4">
+                <p>{comment.content}</p>
+                <CardFooter className="p-0 pt-2 text-xs text-muted-foreground">
+                  <span>작성자: {comment.author}</span>
+                </CardFooter>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        {/* 변경점 */}
+
         {/* 댓글 작성 폼 */}
         <form className="mt-6 flex gap-2" onSubmit={handleCommentSubmit}>
           <Input
@@ -116,7 +138,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
           />
           <Button type="submit">등록</Button>
         </form>
-    
+    </section>
     </main>
   );
 }
